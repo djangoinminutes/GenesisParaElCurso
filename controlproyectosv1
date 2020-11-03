@@ -103,6 +103,8 @@ Las propiedades de este modelo son:
 
 [npro moneda]: [dpro Propiedad que almacena la moneda del desembolso]. Esta propiedad es de tipo foranea [tpro f] relacionada con el modelo [prf moneda]. Aparece en las listas [enl] con [ncl 1] columnas y el nombre de columna [txc Moneda]
 
+[npro fecha]: [dpro Fecha del desembolso]. Esta propiedad es de tipo fecha [tpro n] . Aparece en las listas [enl] con [ncl 1] columnas y el nombre de columna [txc Fecha]
+
 El ultimo modelo definido en esta primera aproximacion de disenio, es el modelo [nmo asignacion] que es el que [dmo relaciona al modelo recurso con el modelo actividad]. De esta manera se controla la distribucion de los recursos humanos en las diferentes actividades de los proyectos. El modelo se despliega en el menu con el texto: [tom Asignacion] y tiene su identificacion gobernada por la expresion compuesta: [smo self.recurso + '-' + self.actividad] que la identifica de forma inequivoca y su identificacion para el borrado es: [bmo recurso + '-' + actividad]
 
 Las propiedades de este modelo son:
