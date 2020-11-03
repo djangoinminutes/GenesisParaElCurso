@@ -254,13 +254,22 @@ from modelos.models import Modelo
 from propiedades.models import Propiedad
 from reglas.models import Regla
 
-def ListaRecursiva(index,strTexto,nombre,proyecto,i):
+def ListaRecursiva(index,strTexto,nombre,proyecto,i,lis):
     for li in Modelo.objects.filter(padre=nombre,proyecto=proyecto):
         li.ordengeneracion = i
         li.save()
         i+=1
+        lis[0] = i
         strTexto.append(str(index+1) + ',' + li.nombre)
-        ListaRecursiva(index+1,strTexto,li.nombre,proyecto,i)
+        ListaRecursiva(index+1,strTexto,li.nombre,proyecto,i,lis)
+        
+# def ListaRecursiva(index,strTexto,nombre,proyecto,i):
+#     for li in Modelo.objects.filter(padre=nombre,proyecto=proyecto):
+#         li.ordengeneracion = i
+#         li.save()
+#         i+=1
+#         strTexto.append(str(index+1) + ',' + li.nombre)
+#         ListaRecursiva(index+1,strTexto,li.nombre,proyecto,i)
 
 def ListaCrear(id):
     strCrear = []
@@ -284,19 +293,37 @@ def ListaCrear(id):
     
     lista = Modelo.objects.filter(padre='nada',proyecto=proyecto).order_by('ordengeneracion')
     orden = 1
+    lis = [orden]
     for li in lista:
-        li.ordengeneracion = orden
+        li.ordengeneracion = lis[0]
         if orden == lista.count():
             li.ultimoregistro = 'u'
         else:
             li.ultimoregistro = 'p'
         li.save()
-        orden += 1
+        lis[0] += 1
+        # lis = [orden]
         strTexto.append('1' + ',' + li.nombre)
-        ListaRecursiva(1,strTexto,li.nombre,proyecto,li.ordengeneracion+1)
-
+        ListaRecursiva(1,strTexto,li.nombre,proyecto,li.ordengeneracion+1,lis)
+        print('lista g ',li.nombre,lis)
     for item in strTexto:
         strCrear.append(item)
+
+    # lista = Modelo.objects.filter(padre='nada',proyecto=proyecto).order_by('ordengeneracion')
+    # orden = 1
+    # for li in lista:
+    #     li.ordengeneracion = orden
+    #     if orden == lista.count():
+    #         li.ultimoregistro = 'u'
+    #     else:
+    #         li.ultimoregistro = 'p'
+    #     li.save()
+    #     orden += 1
+    #     strTexto.append('1' + ',' + li.nombre)
+    #     ListaRecursiva(1,strTexto,li.nombre,proyecto,li.ordengeneracion+1)
+
+    # for item in strTexto:
+    #     strCrear.append(item)
 
 
     identa = 0
@@ -1040,15 +1067,16 @@ class ProcesaTextoView(TemplateView):
                         modelo.proyecto = proyecto
                         modelo.aplicacion = aplicacion
                         modelo.nombre = ProcesaTags(elementos,'modelo' + str(nmo))
+                        print('modelos ',modelo.nombre)
                         nmo += 1
                     if modelo != None:
                         if tag == 'dmo':
                             modelo.descripcion = ProcesaTags(elementos,modelo.descripcion)
+                            print('self ',modelo.descripcion)
                         if tag == 'pmo':
                             modelo.padre = ProcesaTags(elementos,modelo.padre)
                         if tag == 'smo':
                             modelo.nombreself = ProcesaTags(elementos,modelo.nombreself)
-                            print('self ',modelo,modelo.nombreself)
                         if tag == 'bmo':
                             modelo.nombreborrar = ProcesaTags(elementos,modelo.nombreborrar)
                         if tag == 'amo':
